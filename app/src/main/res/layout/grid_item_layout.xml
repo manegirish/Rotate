@@ -12,7 +12,6 @@
         android:ems="2"
         android:gravity="center"
         android:imeOptions="actionDone"
-        android:inputType="number"
         android:lines="1"
         android:textColor="@color/text_color_primary"
         android:textSize="18sp"

@@ -2,6 +2,9 @@ package com.example.girishm.rotate;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +13,19 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
-public class CustomGridAdapter extends BaseAdapter {
+public class GridAdapter extends BaseAdapter {
 
     private Context mContext;
-    private int mNumColumns;
-    private EditText[] editTexts;
+    ArrayList<String> inputArray;
 
-    public CustomGridAdapter(EditText[] editTexts, int mNumColumns, Context c) {
+    public GridAdapter(ArrayList<String> inputArray, Context c) {
         mContext = c;
-        this.editTexts = editTexts;
-        this.mNumColumns = mNumColumns;
+        this.inputArray = inputArray;
     }
 
     @Override
     public int getCount() {
-        return mNumColumns * mNumColumns;
+        return inputArray.size();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class CustomGridAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        /*ViewHolder viewHolder;
+        ViewHolder viewHolder;
 
         View view = convertView;
         if (view == null) {
@@ -54,27 +55,9 @@ public class CustomGridAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        */
-        EditText cell;
-        if (editTexts[position] == null) {
-            cell = editTexts[position] = new EditText(mContext);
-        } else {
-            cell = editTexts[position];
-        }
-        return cell;
-    }
-
-    private void getValue(ViewHolder viewHolder, int position) {
-
-        viewHolder.inputBox.getText().toString();
-    }
-
-    public void getAllNumber(ViewHolder viewHolder) {
-        ArrayList<String> numbers = new ArrayList<>();
-        for (int i = 0; i < getCount(); i++) {
-
-        }
-        notifyDataSetChanged();
+        viewHolder.inputBox.setTag(position);
+        viewHolder.inputBox.setText(inputArray.get(position));
+        return view;
     }
 
     private class ViewHolder {

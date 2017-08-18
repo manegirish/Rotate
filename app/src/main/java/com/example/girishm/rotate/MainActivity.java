@@ -1,19 +1,28 @@
 package com.example.girishm.rotate;
 
-import android.content.Context;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextInputEditText numberBox;
+    private GridView boxGrid;
+
+    private int gridSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,40 +33,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button submitButton = (Button) findViewById(R.id.activity_main_enter_button);
         submitButton.setOnClickListener(this);
+
+        AppCompatImageView clockWiseButton = (AppCompatImageView) findViewById(R.id.activity_main_clockwise_button);
+        clockWiseButton.setOnClickListener(this);
+
+        AppCompatImageView antiClockWiseButton = (AppCompatImageView) findViewById(R.id.activity_main_anti_clockwise_button);
+        antiClockWiseButton.setOnClickListener(this);
     }
 
-    private void drawGrid(int gridSize) {
-        GridView boxGrid = (GridView) findViewById(R.id.activity_main_grid_view);
-        boxGrid.setNumColumns(gridSize);
-        CustomGridAdapter customGrid = new CustomGridAdapter(get(gridSize), gridSize, getApplicationContext());
-        boxGrid.setAdapter(customGrid);
-
-        //get(boxGrid);
-    }
-
-    private EditText[] get(int gridSize) {
-        EditText[] editTexts = new EditText[gridSize * gridSize];
-        for (int i = 0; i < editTexts.length; i++) {
-            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(
-                    Context.LAYOUT_INFLATER_SERVICE);
-            final View view = layoutInflater.inflate(R.layout.grid_item_layout, null);
-            editTexts[i] = (EditText) view.findViewById(R.id.grid_item_input_box);
+    private ArrayList<String> initGrid() {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < (gridSize * gridSize); i++) {
+            list.add(String.valueOf(getRandomChar()));
         }
-        /*
-        final int size = boxGrid.getChildCount();
-        Log.e(MainActivity.class.getSimpleName(), "size: " + size);
-        for (int i = 0; i < size; i++) {
-            ViewGroup gridChild = (ViewGroup) boxGrid.getChildAt(i);
-            Log.e(MainActivity.class.getSimpleName(), "i: " + i);
-            int childSize = gridChild.getChildCount();
-            for (int k = 0; k < childSize; k++) {
-                Log.e(MainActivity.class.getSimpleName(), "k: " + k);
-                EditText input = (EditText) gridChild.getChildAt(k);
-                Log.e(MainActivity.class.getSimpleName(), "" + input.getText().toString());
-            }
-        }*/
+        return list;
+    }
 
-        return editTexts;
+    private char getRandomChar() {
+        Random r = new Random();
+        String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return alphabet.charAt(r.nextInt(alphabet.length()));
+    }
+
+    private void drawGrid(ArrayList<String> list) {
+        boxGrid = (GridView) findViewById(R.id.activity_main_grid_view);
+        boxGrid.setNumColumns(gridSize);
+
+        GridAdapter gridAdapter = new GridAdapter(list, getApplicationContext());
+        boxGrid.setAdapter(gridAdapter);
+    }
+
+    public ArrayList<String> toArrayList(String[][] twoDArray) {
+        ArrayList<String> list = new ArrayList<>();
+        for (String[] aTwoDArray : twoDArray) {
+            Collections.addAll(list, aTwoDArray);
+        }
+        Log.e(MainActivity.class.getSimpleName(), "toArrayList: " + list.toString());
+        return list;
     }
 
     private boolean validate(String gridSize) {
@@ -72,6 +84,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    private String[][] getValues() {
+        int location = 0;
+        String[][] inputMatrix = new String[gridSize][gridSize];
+        for (int i = 0; i < gridSize; i++) {
+            Log.e(MainActivity.class.getSimpleName(), "i: " + i);
+            for (int k = 0; k < gridSize; k++) {
+                if (location < (gridSize * gridSize)) {
+                    LinearLayout linearLayout = (LinearLayout) boxGrid.getChildAt(location);
+                    EditText editText = (EditText) linearLayout.findViewById(R.id.grid_item_input_box);
+                    inputMatrix[i][k] = editText.getText().toString();
+                }
+                location++;
+            }
+        }
+        System.out.println(Arrays.deepToString(inputMatrix));
+        return inputMatrix;
+    }
+
+    public static String[][] rotateClockwise(String[][] matrix) {
+        String[][] rotated = new String[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix[0].length; ++i) {
+            for (int j = 0; j < matrix.length; ++j) {
+                rotated[i][j] = matrix[matrix.length - j - 1][i];
+            }
+        }
+        return rotated;
+    }
+
+    public static String[][] rotateAntiClockwise(String[][] matrix) {
+        String[][] rotated = new String[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix[0].length; ++i) {
+            for (int j = 0; j < matrix.length; ++j) {
+                rotated[i][j] = matrix[j][matrix[0].length - i - 1];
+            }
+        }
+        return rotated;
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -82,10 +132,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.activity_main_enter_button:
-                String gridSize = numberBox.getText().toString().trim();
-                if (validate(gridSize)) {
-                    drawGrid(Integer.parseInt(gridSize));
+                String size = numberBox.getText().toString().trim();
+                if (validate(size)) {
+                    gridSize = Integer.parseInt(size);
+                    drawGrid(initGrid());
                 }
+                break;
+            case R.id.activity_main_anti_clockwise_button:
+                drawGrid(toArrayList(rotateAntiClockwise(getValues())));
+                break;
+            case R.id.activity_main_clockwise_button:
+                drawGrid(toArrayList(rotateClockwise(getValues())));
                 break;
         }
     }

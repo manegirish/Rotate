@@ -10,5 +10,8 @@
 
     <color name="grid_item_background">#e5e5e5</color>
 
+    <color name="color_clockwise">#90c695</color>
+    <color name="color_anti_clockwise">#fb6f6f</color>
+
     <color name="white">#FFFFFF</color>
 </resources>
