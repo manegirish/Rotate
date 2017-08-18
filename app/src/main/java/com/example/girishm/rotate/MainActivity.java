@@ -4,7 +4,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (String[] aTwoDArray : twoDArray) {
             Collections.addAll(list, aTwoDArray);
         }
-        Log.e(MainActivity.class.getSimpleName(), "toArrayList: " + list.toString());
+        // Log.e(MainActivity.class.getSimpleName(), "toArrayList: " + list.toString());
         return list;
     }
 
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int location = 0;
         String[][] inputMatrix = new String[gridSize][gridSize];
         for (int i = 0; i < gridSize; i++) {
-            Log.e(MainActivity.class.getSimpleName(), "i: " + i);
+            // Log.e(MainActivity.class.getSimpleName(), "i: " + i);
             for (int k = 0; k < gridSize; k++) {
                 if (location < (gridSize * gridSize)) {
                     LinearLayout linearLayout = (LinearLayout) boxGrid.getChildAt(location);
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 location++;
             }
         }
-        System.out.println(Arrays.deepToString(inputMatrix));
+        // System.out.println(Arrays.deepToString(inputMatrix));
         return inputMatrix;
     }
 
