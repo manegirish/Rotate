@@ -1,5 +1,6 @@
 package com.example.girishm.rotate;
 
+import android.content.pm.ActivityInfo;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextInputEditText numberBox;
     private GridView boxGrid;
+    private LinearLayout footerLayout;
 
     private int gridSize;
 
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         numberBox = (TextInputEditText) findViewById(R.id.activity_main_grid_size);
 
@@ -38,6 +41,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         AppCompatImageView antiClockWiseButton = (AppCompatImageView) findViewById(R.id.activity_main_anti_clockwise_button);
         antiClockWiseButton.setOnClickListener(this);
+
+        footerLayout = (LinearLayout) findViewById(R.id.activity_main_footer);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toggleFooter();
+    }
+
+    private void toggleFooter() {
+        if (gridSize <= 0) {
+            footerLayout.setVisibility(View.GONE);
+        } else {
+            footerLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private ArrayList<String> initGrid() {
@@ -135,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (validate(size)) {
                     gridSize = Integer.parseInt(size);
                     drawGrid(initGrid());
+                    toggleFooter();
                 }
                 break;
             case R.id.activity_main_anti_clockwise_button:
