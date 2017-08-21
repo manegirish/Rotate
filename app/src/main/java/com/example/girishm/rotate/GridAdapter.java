@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,12 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
-public class GridAdapter extends BaseAdapter {
+class GridAdapter extends BaseAdapter {
 
     private Context mContext;
-    ArrayList<String> inputArray;
+    private ArrayList<String> inputArray;
 
-    public GridAdapter(ArrayList<String> inputArray, Context c) {
+    GridAdapter(ArrayList<String> inputArray, Context c) {
         mContext = c;
         this.inputArray = inputArray;
     }
@@ -41,7 +40,7 @@ public class GridAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
 
         View view = convertView;
         if (view == null) {
@@ -57,6 +56,32 @@ public class GridAdapter extends BaseAdapter {
         }
         viewHolder.inputBox.setTag(position);
         viewHolder.inputBox.setText(inputArray.get(position));
+
+        viewHolder.inputBox.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                final int position = (Integer) v.getTag();
+                if (hasFocus) {
+                    viewHolder.inputBox.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            inputArray.remove(position);
+                            inputArray.add(position, s.toString());
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
         return view;
     }
 
